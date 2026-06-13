@@ -1,0 +1,1153 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#071d3d" />
+  <title>선재의 탐진강 황금물고기를 잡아라!</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            river: "#14d9e5",
+            deep: "#071d3d",
+            neon: "#f8ff65",
+            coral: "#ff5470",
+          },
+          fontFamily: {
+            pixel: ['"DungGeunMo"', '"NeoDunggeunmo"', '"Courier New"', "monospace"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    @font-face {
+      font-family: "DungGeunMo";
+      src: local("DungGeunMo"), local("NeoDunggeunmo");
+      font-display: swap;
+    }
+
+    :root {
+      color-scheme: dark;
+      --ink: #071d3d;
+      --cream: #fff9dd;
+      --cyan: #14d9e5;
+      --yellow: #f8ff65;
+      --pink: #ff5470;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior-x: none;
+      overscroll-behavior-y: auto;
+      touch-action: manipulation;
+      background: #071d3d;
+    }
+
+    body {
+      font-family: "DungGeunMo", "NeoDunggeunmo", "Courier New", monospace;
+      background:
+        radial-gradient(circle at 14% 12%, rgba(20, 217, 229, .22), transparent 30%),
+        radial-gradient(circle at 88% 78%, rgba(255, 84, 112, .16), transparent 28%),
+        linear-gradient(145deg, #06142e 0%, #0a3760 54%, #071d3d 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .18;
+      background-image:
+        linear-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px);
+      background-size: 12px 12px;
+      mask-image: linear-gradient(to bottom, #000, transparent 85%);
+    }
+
+    .pixel-shadow {
+      box-shadow:
+        0 0 0 3px #071d3d,
+        7px 7px 0 #071d3d,
+        7px 7px 0 3px rgba(20, 217, 229, .35);
+    }
+
+    .cabinet {
+      position: relative;
+      isolation: isolate;
+      border: 4px solid var(--ink);
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ff5470 0 8%, #ff785a 8% 14%, #f8ff65 14% 100%);
+      box-shadow:
+        0 0 0 4px #fff9dd,
+        0 0 0 8px #071d3d,
+        14px 16px 0 rgba(3, 12, 28, .5),
+        0 0 42px rgba(20, 217, 229, .25);
+    }
+
+    .cabinet::before,
+    .cabinet::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      z-index: 5;
+      background: var(--ink);
+      box-shadow: inset 4px 4px rgba(255,255,255,.28);
+    }
+
+    .cabinet::before { left: 12px; top: 12px; }
+    .cabinet::after { right: 12px; top: 12px; }
+
+    .marquee-text {
+      display: inline-block;
+      padding: .18em .48em .24em;
+      border: 3px solid #071d3d;
+      background: #07385a;
+      color: #fff9dd;
+      box-shadow: 5px 5px 0 #071d3d;
+      text-shadow:
+        2px 0 #ff5470, -2px 0 #14d9e5,
+        0 3px #071d3d;
+      letter-spacing: -.045em;
+    }
+
+    .location-label {
+      font-family: Arial, "Noto Sans KR", sans-serif;
+      font-weight: 700;
+      letter-spacing: .015em;
+    }
+
+    .player-input {
+      width: 100%;
+      border: 3px solid var(--ink);
+      background: #fff;
+      color: var(--ink);
+      outline: none;
+      box-shadow: inset 3px 3px 0 rgba(7, 29, 61, .12);
+    }
+
+    .player-input:focus {
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(20, 217, 229, .35);
+    }
+
+    .rank-row {
+      display: grid;
+      grid-template-columns: 46px minmax(0, 1fr) 80px;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 2px dashed rgba(7, 29, 61, .2);
+    }
+
+    .rank-row:last-child {
+      border-bottom: 0;
+    }
+
+    .game-width {
+      width: 80%;
+      max-width: 768px;
+    }
+
+    .screen-shell {
+      background: #021024;
+      border: 5px solid var(--ink);
+      box-shadow:
+        inset 0 0 0 3px rgba(255,255,255,.12),
+        inset 0 0 35px #000;
+    }
+
+    .screen-shell::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      opacity: .12;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 3px,
+        rgba(3, 16, 36, .7) 4px
+      );
+      mix-blend-mode: multiply;
+    }
+
+    #gameCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      image-rendering: pixelated;
+      image-rendering: crisp-edges;
+      cursor: crosshair;
+      touch-action: pan-y;
+    }
+
+    .hud-chip {
+      border: 3px solid var(--ink);
+      background: rgba(255, 249, 221, .94);
+      color: var(--ink);
+      box-shadow: 4px 4px 0 var(--ink);
+    }
+
+    .modal-panel {
+      border: 4px solid var(--ink);
+      background: rgba(255, 249, 221, .97);
+      color: var(--ink);
+      box-shadow:
+        8px 8px 0 var(--ink),
+        0 0 0 4px rgba(255,255,255,.3);
+    }
+
+    .pixel-button {
+      position: relative;
+      border: 3px solid var(--ink);
+      background: var(--pink);
+      color: #fff;
+      box-shadow: 5px 5px 0 var(--ink);
+      transition: transform 80ms ease, box-shadow 80ms ease, filter 120ms ease;
+      touch-action: manipulation;
+    }
+
+    .pixel-button:hover { filter: brightness(1.1) saturate(1.08); }
+    .pixel-button:active {
+      transform: translate(4px, 4px);
+      box-shadow: 1px 1px 0 var(--ink);
+    }
+
+    .pixel-button.yellow {
+      background: var(--yellow);
+      color: var(--ink);
+    }
+
+    .legend-card {
+      border: 3px solid var(--ink);
+      background: rgba(255, 249, 221, .94);
+      color: var(--ink);
+      box-shadow: 5px 5px 0 var(--ink);
+    }
+
+    .blink { animation: blink 900ms steps(2, end) infinite; }
+    .floaty { animation: floaty 2.8s ease-in-out infinite; }
+
+    @keyframes blink { 50% { opacity: .3; } }
+    @keyframes floaty { 50% { transform: translateY(-7px); } }
+    @keyframes score-bump {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.32) rotate(-3deg); color: #ff5470; }
+      100% { transform: scale(1); }
+    }
+
+    .score-bump { animation: score-bump 220ms steps(3, end); }
+
+    @media (max-width: 640px) {
+      .cabinet {
+        border-width: 3px;
+        border-radius: 8px;
+        box-shadow:
+          0 0 0 3px #fff9dd,
+          0 0 0 6px #071d3d,
+          8px 10px 0 rgba(3, 12, 28, .5);
+      }
+      .screen-shell { border-width: 4px; }
+      .cabinet::before,
+      .cabinet::after { width: 10px; height: 10px; top: 8px; }
+      .cabinet::before { left: 8px; }
+      .cabinet::after { right: 8px; }
+    }
+
+    @media (max-width: 480px) {
+      .game-width { width: 96%; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .floaty, .blink { animation: none; }
+    }
+  </style>
+</head>
+<body class="text-white">
+  <main class="relative mx-auto flex min-h-[100svh] w-full max-w-6xl flex-col items-center justify-center px-3 py-5 sm:px-6 sm:py-8">
+    <header class="game-width mb-3 flex items-end justify-between gap-3 px-1 sm:mb-4">
+      <div>
+        <div class="mb-1 inline-flex items-center gap-2 border-2 border-deep bg-river px-2 py-1 text-[10px] font-black tracking-widest text-deep shadow-[3px_3px_0_#071d3d] sm:text-xs">
+          <span class="inline-block h-2 w-2 animate-pulse bg-coral"></span>
+          JANGHEUNG WATER FESTIVAL
+        </div>
+        <p class="location-label text-xs text-cyan-50 sm:text-sm">대한민국 정남진 · 전라남도 장흥군</p>
+      </div>
+      <div class="hidden rotate-2 border-2 border-deep bg-neon px-3 py-2 text-xs font-black text-deep shadow-[4px_4px_0_#071d3d] sm:block">
+        탐진강 ARCADE<br />SUMMER EDITION
+      </div>
+    </header>
+
+    <section class="cabinet game-width p-2.5 pt-3 sm:p-4 sm:pt-4">
+      <div class="mb-3 px-8 text-center sm:mb-4">
+        <p class="mb-1 text-[9px] font-black tracking-[.35em] text-deep sm:text-xs">JANGHEUNG MINI GAME</p>
+        <h1 class="marquee-text text-lg font-black leading-tight sm:text-2xl md:text-3xl">
+          선재의 탐진강 황금물고기를 잡아라!
+        </h1>
+      </div>
+
+      <div class="relative mx-auto w-full">
+        <div class="mb-2 grid grid-cols-3 gap-2 sm:mb-3 sm:gap-3">
+          <div class="hud-chip flex items-center justify-center gap-1 px-2 py-1.5 text-center text-xs font-black sm:gap-2 sm:px-3 sm:py-2 sm:text-lg">
+            <span class="text-coral">SCORE</span>
+            <span id="scoreDisplay" class="tabular-nums">000</span>
+          </div>
+          <div id="timerChip" class="hud-chip flex items-center justify-center gap-1 px-2 py-1.5 text-center text-xs font-black sm:gap-2 sm:px-3 sm:py-2 sm:text-lg">
+            <span class="text-sky-600">TIME</span>
+            <span id="timerDisplay" class="tabular-nums">30</span>
+          </div>
+          <div class="hud-chip flex items-center justify-center gap-1 px-2 py-1.5 text-center text-[10px] font-black sm:gap-2 sm:px-3 sm:py-2 sm:text-base">
+            <span class="text-amber-500">BEST</span>
+            <span id="bestDisplay" class="tabular-nums">000</span>
+          </div>
+        </div>
+
+        <div id="screenShell" class="screen-shell relative aspect-[4/3] w-full overflow-hidden rounded-sm">
+          <canvas id="gameCanvas" width="960" height="720" aria-label="탐진강 물고기 잡기 게임"></canvas>
+
+          <div id="startOverlay" class="absolute inset-0 z-20 flex items-center justify-center bg-deep/55 p-4 backdrop-blur-[2px]">
+            <div class="modal-panel w-full max-w-md p-4 text-center sm:p-6">
+              <div class="floaty mx-auto mb-2 text-5xl drop-shadow-[4px_4px_0_#071d3d] sm:text-6xl">🐟</div>
+              <p class="mb-1 text-[10px] font-black tracking-[.28em] text-sky-600 sm:text-xs">TAMJIN RIVER MISSION</p>
+              <h2 class="mb-3 text-xl font-black leading-tight sm:text-3xl">30초 동안<br /><span class="text-amber-500">황금 물고기</span>를 찾아라!</h2>
+              <p class="mb-3 text-xs font-bold leading-relaxed text-slate-700 sm:text-sm">
+                물고기를 터치하면 점수 UP!<br />
+                강을 깨끗하게, 쓰레기는 조심하세요.
+              </p>
+              <label for="playerName" class="mb-1 block text-left text-[10px] font-black tracking-wider text-sky-700 sm:text-xs">
+                PLAYER NAME
+              </label>
+              <input
+                id="playerName"
+                class="player-input mb-1 px-3 py-2.5 text-center text-sm font-black sm:text-base"
+                type="text"
+                maxlength="10"
+                autocomplete="nickname"
+                placeholder="닉네임을 입력하세요"
+                aria-describedby="nameError"
+              />
+              <p id="nameError" class="mb-3 min-h-4 text-left text-[10px] font-black text-coral sm:text-xs"></p>
+              <button id="startButton" class="pixel-button yellow w-full px-5 py-3 text-base font-black sm:text-xl" type="button">
+                ▶ GAME START
+              </button>
+              <p class="blink mt-4 text-[10px] font-black tracking-widest text-coral sm:text-xs">TOUCH · CLICK TO CATCH!</p>
+            </div>
+          </div>
+
+          <div id="endOverlay" class="absolute inset-0 z-30 hidden items-center justify-center bg-deep/70 p-4 backdrop-blur-[3px]">
+            <div class="modal-panel w-full max-w-md p-4 text-center sm:p-6">
+              <p class="mb-1 text-xs font-black tracking-[.25em] text-coral">MISSION COMPLETE!</p>
+              <h2 class="mb-1 text-2xl font-black sm:text-4xl">최종 점수</h2>
+              <p id="finalScore" class="mb-3 text-5xl font-black tabular-nums text-sky-500 drop-shadow-[3px_3px_0_#071d3d] sm:text-6xl">0</p>
+              <div id="resultBadge" class="mb-4 border-2 border-deep bg-neon px-3 py-2 text-sm font-black shadow-[3px_3px_0_#071d3d] sm:text-base">
+                탐진강 낚시 새싹!
+              </div>
+              <p class="mb-4 text-sm font-black leading-relaxed sm:text-lg">
+                시원한 여름, 신나는 물놀이!<br />
+                <span class="text-coral">장흥물축제에 놀러오세요!</span>
+              </p>
+              <button id="restartButton" class="pixel-button w-full px-5 py-3 text-base font-black sm:text-xl" type="button">
+                ↻ 한 판 더!
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-3 flex items-center justify-between gap-3 border-2 border-deep bg-deep px-3 py-2 text-[9px] font-bold text-cyan-50 sm:mt-4 sm:px-4 sm:text-xs">
+        <span><b class="text-neon">TIP!</b> 황금 물고기는 +10점</span>
+        <span class="text-right text-cyan-200">마우스 / 터치</span>
+      </div>
+    </section>
+
+    <section class="game-width mt-6 grid grid-cols-1 gap-3 sm:mt-7 sm:grid-cols-2">
+      <div class="legend-card p-4">
+        <h2 class="mb-3 flex items-center gap-2 text-sm font-black sm:text-base">
+          <span class="bg-sky-500 px-2 py-1 text-white">CATCH</span>
+          탐진강 친구들
+        </h2>
+        <div class="grid grid-cols-4 gap-2 text-center text-[10px] font-black sm:text-xs">
+          <div><span class="block text-xl">✨🐟</span><b class="text-amber-500">+10</b></div>
+          <div><span class="block text-xl">🐠</span><b class="text-pink-500">+7</b></div>
+          <div><span class="block text-xl">🦈</span><b class="text-sky-600">+5~6</b></div>
+          <div><span class="block text-xl">🐟</span><b class="text-emerald-600">+1~4</b></div>
+        </div>
+      </div>
+      <div class="legend-card p-4">
+        <h2 class="mb-3 flex items-center gap-2 text-sm font-black sm:text-base">
+          <span class="bg-coral px-2 py-1 text-white">CAUTION</span>
+          깨끗한 탐진강
+        </h2>
+        <div class="grid grid-cols-3 gap-2 text-center text-[10px] font-black sm:text-xs">
+          <div><span class="block text-xl">🧴</span><b class="text-coral">-3</b> 플라스틱</div>
+          <div><span class="block text-xl">🛍️</span><b class="text-coral">-2</b> 비닐봉지</div>
+          <div><span class="block text-xl">🥫</span><b class="text-coral">-1</b> 쓰레기</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="leaderboardSection" class="game-width mt-6 sm:mt-7">
+      <div class="legend-card overflow-hidden">
+        <div class="flex items-center justify-between gap-3 border-b-4 border-deep bg-river px-4 py-3 sm:px-6 sm:py-4">
+          <div>
+            <p class="text-[9px] font-black tracking-[.22em] text-sky-900 sm:text-xs">TAMJIN RIVER HALL OF FAME</p>
+            <h2 class="text-xl font-black sm:text-3xl">오늘의 리더보드</h2>
+          </div>
+          <div class="border-2 border-deep bg-neon px-3 py-2 text-xs font-black shadow-[3px_3px_0_#071d3d] sm:text-sm">
+            TOP 10
+          </div>
+        </div>
+        <div class="grid grid-cols-[46px_1fr_80px] gap-2 bg-deep px-4 py-2 text-[10px] font-black tracking-wider text-cyan-100 sm:px-6 sm:text-xs">
+          <span>RANK</span>
+          <span>PLAYER</span>
+          <span class="text-right">SCORE</span>
+        </div>
+        <div id="leaderboardList" class="px-4 py-2 sm:px-6"></div>
+        <div id="emptyLeaderboard" class="px-4 py-8 text-center text-sm font-black text-slate-500 sm:px-6 sm:text-base">
+          아직 기록이 없습니다. 첫 번째 낚시왕이 되어보세요!
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-6 text-center text-[10px] font-bold tracking-wider text-cyan-100/70 sm:text-xs">
+      CLEAN RIVER · COOL SUMMER · JANGHEUNG WATER FESTIVAL
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const canvas = document.getElementById("gameCanvas");
+      const ctx = canvas.getContext("2d");
+      const screenShell = document.getElementById("screenShell");
+      const scoreDisplay = document.getElementById("scoreDisplay");
+      const timerDisplay = document.getElementById("timerDisplay");
+      const timerChip = document.getElementById("timerChip");
+      const bestDisplay = document.getElementById("bestDisplay");
+      const startOverlay = document.getElementById("startOverlay");
+      const endOverlay = document.getElementById("endOverlay");
+      const finalScore = document.getElementById("finalScore");
+      const resultBadge = document.getElementById("resultBadge");
+      const startButton = document.getElementById("startButton");
+      const restartButton = document.getElementById("restartButton");
+      const playerNameInput = document.getElementById("playerName");
+      const nameError = document.getElementById("nameError");
+      const leaderboardList = document.getElementById("leaderboardList");
+      const emptyLeaderboard = document.getElementById("emptyLeaderboard");
+
+      const W = canvas.width;
+      const H = canvas.height;
+      const GAME_SECONDS = 30;
+      const STORAGE_KEY = "jangheung-golden-fish-best";
+      const LEADERBOARD_KEY = "jangheung-golden-fish-leaderboard";
+
+      const TYPES = [
+        { id: "gold", name: "황금 물고기", score: 10, weight: 2, minSize: 45, maxSize: 55, speed: [100, 145] },
+        { id: "salmon", name: "연어", score: 7, weight: 5, minSize: 42, maxSize: 54, speed: [90, 140] },
+        { id: "whiteShark", name: "백상아리", score: 6, weight: 5, minSize: 58, maxSize: 72, speed: [110, 155] },
+        { id: "blueShark", name: "청상아리", score: 5, weight: 7, minSize: 54, maxSize: 68, speed: [115, 165] },
+        { id: "eel", name: "장어", score: 4, weight: 8, minSize: 50, maxSize: 65, speed: [90, 135] },
+        { id: "flatfish", name: "광어", score: 3, weight: 10, minSize: 46, maxSize: 60, speed: [75, 115] },
+        { id: "fish", name: "일반 물고기", score: 1, weight: 26, minSize: 36, maxSize: 49, speed: [80, 130] },
+        { id: "plastic", name: "플라스틱", score: -3, weight: 10, minSize: 52, maxSize: 66, speed: [45, 75] },
+        { id: "bag", name: "비닐 봉지", score: -2, weight: 12, minSize: 54, maxSize: 70, speed: [40, 68] },
+        { id: "trash", name: "일반 쓰레기", score: -1, weight: 15, minSize: 48, maxSize: 62, speed: [45, 72] },
+      ];
+
+      let objects = [];
+      let particles = [];
+      let popups = [];
+      let bubbles = [];
+      let score = 0;
+      let timeLeft = GAME_SECONDS;
+      let playing = false;
+      let lastTime = 0;
+      let elapsed = 0;
+      let spawnTimer = 0;
+      let startTimestamp = 0;
+      let animationId = 0;
+      let flash = 0;
+      let shake = 0;
+      let currentPlayer = "";
+      let best = Number(localStorage.getItem(STORAGE_KEY) || 0);
+
+      bestDisplay.textContent = padScore(best);
+      renderLeaderboard();
+
+      function padScore(value) {
+        const sign = value < 0 ? "-" : "";
+        return sign + String(Math.abs(value)).padStart(3, "0");
+      }
+
+      function random(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      function getLeaderboard() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(LEADERBOARD_KEY) || "[]");
+          return Array.isArray(saved) ? saved : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function renderLeaderboard() {
+        const records = getLeaderboard();
+        leaderboardList.replaceChildren();
+        emptyLeaderboard.classList.toggle("hidden", records.length > 0);
+
+        records.forEach((record, index) => {
+          const row = document.createElement("div");
+          row.className = "rank-row px-1 py-3 text-sm font-black sm:px-2 sm:text-base";
+
+          const rank = document.createElement("span");
+          rank.className = index < 3 ? "text-lg text-coral sm:text-xl" : "text-slate-500";
+          rank.textContent = String(index + 1).padStart(2, "0");
+
+          const name = document.createElement("span");
+          name.className = "truncate text-deep";
+          name.textContent = record.name;
+
+          const points = document.createElement("span");
+          points.className = "text-right text-lg tabular-nums text-sky-600 sm:text-xl";
+          points.textContent = record.score;
+
+          row.append(rank, name, points);
+          leaderboardList.append(row);
+        });
+      }
+
+      function saveLeaderboardScore() {
+        const records = getLeaderboard();
+        records.push({
+          name: currentPlayer,
+          score,
+          playedAt: Date.now(),
+        });
+        records.sort((a, b) => b.score - a.score || a.playedAt - b.playedAt);
+        localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(records.slice(0, 10)));
+        renderLeaderboard();
+      }
+
+      function chooseType(forceTrash = false) {
+        const progress = Math.min(1, elapsed / GAME_SECONDS);
+        const pool = forceTrash ? TYPES.filter(type => type.score < 0) : TYPES;
+        const weightedTypes = pool.map(type => ({
+          type,
+          weight: type.score < 0
+            ? type.weight * (.55 + progress * 3.2)
+            : type.weight * (1 - progress * .18),
+        }));
+        const total = weightedTypes.reduce((sum, item) => sum + item.weight, 0);
+        let roll = Math.random() * total;
+        for (const item of weightedTypes) {
+          roll -= item.weight;
+          if (roll <= 0) return item.type;
+        }
+        return weightedTypes[weightedTypes.length - 1].type;
+      }
+
+      function makeBubbles() {
+        bubbles = Array.from({ length: 28 }, () => ({
+          x: random(0, W),
+          y: random(0, H),
+          r: random(2, 9),
+          speed: random(7, 24),
+          phase: random(0, Math.PI * 2),
+        }));
+      }
+
+      function spawnObject(forceTrash = false) {
+        const type = chooseType(forceTrash);
+        const size = random(type.minSize, type.maxSize);
+        const fromLeft = Math.random() > 0.5;
+        const trash = type.score < 0;
+        const laneY = random(130, H - 95);
+        const speed = random(type.speed[0], type.speed[1]);
+
+        objects.push({
+          type,
+          x: fromLeft ? -size * 1.7 : W + size * 1.7,
+          y: laneY,
+          baseY: laneY,
+          size,
+          vx: (fromLeft ? 1 : -1) * speed,
+          age: 0,
+          life: trash ? random(6.5, 9) : random(5.5, 8),
+          phase: random(0, Math.PI * 2),
+          rotation: trash ? random(-0.35, 0.35) : 0,
+          hit: false,
+        });
+      }
+
+      function requestStart() {
+        const enteredName = playerNameInput.value.trim().replace(/\s+/g, " ");
+        if (!enteredName) {
+          nameError.textContent = "닉네임을 입력해야 게임을 시작할 수 있어요.";
+          playerNameInput.focus();
+          return;
+        }
+
+        currentPlayer = enteredName.slice(0, 10);
+        playerNameInput.value = currentPlayer;
+        nameError.textContent = "";
+        startGame();
+      }
+
+      function startGame() {
+        cancelAnimationFrame(animationId);
+        objects = [];
+        particles = [];
+        popups = [];
+        score = 0;
+        timeLeft = GAME_SECONDS;
+        elapsed = 0;
+        spawnTimer = 0;
+        flash = 0;
+        shake = 0;
+        playing = true;
+        startTimestamp = performance.now();
+        lastTime = startTimestamp;
+        scoreDisplay.textContent = "000";
+        timerDisplay.textContent = "30";
+        timerChip.classList.remove("bg-coral", "text-white");
+        startOverlay.classList.add("hidden");
+        endOverlay.classList.add("hidden");
+        endOverlay.classList.remove("flex");
+
+        for (let i = 0; i < 5; i++) {
+          setTimeout(() => playing && spawnObject(), i * 130);
+        }
+        animationId = requestAnimationFrame(loop);
+      }
+
+      function endGame() {
+        playing = false;
+        timeLeft = 0;
+        timerDisplay.textContent = "00";
+        objects = [];
+
+        if (score > best) {
+          best = score;
+          localStorage.setItem(STORAGE_KEY, String(best));
+          bestDisplay.textContent = padScore(best);
+        }
+
+        saveLeaderboardScore();
+        finalScore.textContent = score;
+        resultBadge.textContent =
+          score >= 100 ? "황금 물고기 마스터!" :
+          score >= 60 ? "탐진강 낚시왕!" :
+          score >= 30 ? "물고기 사냥꾼!" :
+          "탐진강 낚시 새싹!";
+
+        setTimeout(() => {
+          endOverlay.classList.remove("hidden");
+          endOverlay.classList.add("flex");
+        }, 450);
+      }
+
+      function update(dt, now) {
+        elapsed += dt;
+        timeLeft = Math.max(0, GAME_SECONDS - (now - startTimestamp) / 1000);
+        timerDisplay.textContent = String(Math.ceil(timeLeft)).padStart(2, "0");
+
+        if (timeLeft <= 10) {
+          timerChip.classList.add("bg-coral", "text-white");
+        }
+
+        if (timeLeft <= 0) {
+          endGame();
+          return;
+        }
+
+        const intensity = 1 + elapsed / 35;
+        spawnTimer -= dt;
+        if (spawnTimer <= 0) {
+          spawnObject();
+          const progress = elapsed / GAME_SECONDS;
+          if (elapsed > 10 && Math.random() < progress * .7) {
+            spawnObject(true);
+          }
+          if (elapsed > 18 && Math.random() < progress * .25) {
+            spawnObject(true);
+          }
+          spawnTimer = random(0.45, 0.82) / intensity;
+        }
+
+        for (const obj of objects) {
+          obj.age += dt;
+          obj.x += obj.vx * dt;
+          obj.y = obj.baseY + Math.sin(obj.age * 2.7 + obj.phase) * (obj.type.score < 0 ? 12 : 8);
+          if (obj.type.score < 0) obj.rotation += dt * 0.22;
+        }
+
+        objects = objects.filter(obj =>
+          !obj.hit &&
+          obj.age < obj.life &&
+          obj.x > -obj.size * 2.5 &&
+          obj.x < W + obj.size * 2.5
+        );
+
+        for (const p of particles) {
+          p.life -= dt;
+          p.x += p.vx * dt;
+          p.y += p.vy * dt;
+          p.vy += 120 * dt;
+          p.vx *= 0.985;
+        }
+        particles = particles.filter(p => p.life > 0);
+
+        for (const popup of popups) {
+          popup.life -= dt;
+          popup.y -= 62 * dt;
+        }
+        popups = popups.filter(p => p.life > 0);
+
+        for (const bubble of bubbles) {
+          bubble.y -= bubble.speed * dt;
+          bubble.x += Math.sin(elapsed * 1.8 + bubble.phase) * 5 * dt;
+          if (bubble.y < -15) {
+            bubble.y = H + 15;
+            bubble.x = random(0, W);
+          }
+        }
+
+        flash = Math.max(0, flash - dt * 3.4);
+        shake = Math.max(0, shake - dt * 34);
+      }
+
+      function loop(now) {
+        const dt = Math.min((now - lastTime) / 1000, 0.034);
+        lastTime = now;
+        if (playing) update(dt, now);
+        draw();
+        if (playing || particles.length || popups.length) {
+          animationId = requestAnimationFrame(loop);
+        }
+      }
+
+      function draw() {
+        ctx.save();
+        const sx = shake ? random(-shake, shake) : 0;
+        const sy = shake ? random(-shake * .5, shake * .5) : 0;
+        ctx.translate(sx, sy);
+        drawBackground();
+        drawBubbles();
+
+        for (const obj of objects) drawObject(obj);
+        for (const p of particles) drawParticle(p);
+        for (const popup of popups) drawPopup(popup);
+
+        if (flash > 0) {
+          ctx.fillStyle = `rgba(248,255,101,${flash * .16})`;
+          ctx.fillRect(0, 0, W, H);
+        }
+        ctx.restore();
+      }
+
+      function drawBackground() {
+        const sky = ctx.createLinearGradient(0, 0, 0, H);
+        sky.addColorStop(0, "#56e6ef");
+        sky.addColorStop(.2, "#22cfe3");
+        sky.addColorStop(.55, "#087cb1");
+        sky.addColorStop(1, "#06466f");
+        ctx.fillStyle = sky;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "#bdf8f4";
+        ctx.fillRect(0, 0, W, 16);
+        ctx.fillStyle = "rgba(255,255,255,.42)";
+        for (let x = -40; x < W + 80; x += 90) {
+          const shift = (elapsed * 28) % 90;
+          ctx.fillRect(x + shift, 34, 52, 8);
+          ctx.fillRect(x - shift * .55, 65, 34, 6);
+        }
+
+        ctx.fillStyle = "rgba(6,70,111,.3)";
+        ctx.beginPath();
+        ctx.moveTo(0, 155);
+        for (let x = 0; x <= W; x += 80) {
+          ctx.lineTo(x, 145 + Math.sin(x * .018) * 24);
+        }
+        ctx.lineTo(W, 240);
+        ctx.lineTo(0, 240);
+        ctx.fill();
+
+        ctx.fillStyle = "#1b876f";
+        ctx.beginPath();
+        ctx.moveTo(0, H);
+        ctx.lineTo(0, 610);
+        for (let x = 0; x <= W; x += 70) {
+          ctx.lineTo(x, 624 + Math.sin(x * .023) * 16);
+        }
+        ctx.lineTo(W, H);
+        ctx.fill();
+
+        ctx.fillStyle = "#f3cc75";
+        ctx.fillRect(0, 664, W, 56);
+        ctx.fillStyle = "#d9a85f";
+        for (let x = 12; x < W; x += 47) {
+          ctx.fillRect(x, 682 + (x % 3) * 7, 10, 6);
+        }
+
+        drawPlant(75, 675, "#2bd18b", 1);
+        drawPlant(120, 680, "#8bf08b", .75);
+        drawPlant(842, 680, "#2bd18b", 1.1);
+        drawPlant(900, 680, "#8bf08b", .7);
+
+        ctx.fillStyle = "rgba(255,255,255,.07)";
+        for (let y = 115; y < H - 80; y += 56) {
+          ctx.fillRect(0, y, W, 2);
+        }
+
+        ctx.fillStyle = "rgba(7,29,61,.42)";
+        ctx.font = 'bold 18px "Courier New", monospace';
+        ctx.textAlign = "right";
+        ctx.fillText("TAMJIN RIVER · JANGHEUNG", W - 24, H - 24);
+      }
+
+      function drawPlant(x, base, color, scale) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 10 * scale;
+        ctx.lineCap = "square";
+        for (let i = -1; i <= 1; i++) {
+          ctx.beginPath();
+          ctx.moveTo(x + i * 8, base);
+          ctx.quadraticCurveTo(x + i * 18, base - 52 * scale, x + i * 4, base - 95 * scale);
+          ctx.stroke();
+        }
+      }
+
+      function drawBubbles() {
+        ctx.strokeStyle = "rgba(223,255,255,.48)";
+        ctx.lineWidth = 3;
+        for (const bubble of bubbles) {
+          ctx.beginPath();
+          ctx.arc(bubble.x, bubble.y, bubble.r, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.fillStyle = "rgba(255,255,255,.35)";
+          ctx.fillRect(bubble.x - bubble.r * .35, bubble.y - bubble.r * .45, 2, 2);
+        }
+      }
+
+      function drawObject(obj) {
+        ctx.save();
+        ctx.translate(Math.round(obj.x), Math.round(obj.y));
+        ctx.rotate(obj.rotation);
+        const dir = Math.sign(obj.vx);
+        ctx.scale(dir, 1);
+        const s = obj.size;
+
+        if (obj.type.score < 0) {
+          drawTrash(obj.type.id, s);
+        } else {
+          drawFish(obj.type.id, s, obj.age);
+        }
+        ctx.restore();
+      }
+
+      function pxRect(x, y, w, h, color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h));
+      }
+
+      function drawFish(id, s, age) {
+        const palette = {
+          gold: ["#ffd428", "#fff57b", "#e89316"],
+          salmon: ["#ff6882", "#ffb075", "#d83f68"],
+          whiteShark: ["#d9f5f4", "#8cb9c4", "#4c7286"],
+          blueShark: ["#45bde9", "#176ea5", "#0c416f"],
+          eel: ["#5ad48a", "#b9ed74", "#25755f"],
+          flatfish: ["#d6aa75", "#f0d49b", "#8c674c"],
+          fish: ["#6cf0db", "#2cb9c4", "#087fa1"],
+        };
+        const [main, light, dark] = palette[id];
+        const outline = "#071d3d";
+
+        if (id === "gold") {
+          ctx.save();
+          ctx.rotate(age * .45);
+          ctx.strokeStyle = "rgba(255,244,94,.75)";
+          ctx.lineWidth = 4;
+          for (let i = 0; i < 8; i++) {
+            ctx.rotate(Math.PI / 4);
+            ctx.beginPath();
+            ctx.moveTo(s * .72, 0);
+            ctx.lineTo(s * .98, 0);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+
+        if (id === "eel") {
+          ctx.strokeStyle = outline;
+          ctx.lineWidth = s * .34;
+          ctx.beginPath();
+          ctx.moveTo(-s * .66, 0);
+          ctx.bezierCurveTo(-s * .25, -s * .35, s * .2, s * .32, s * .65, 0);
+          ctx.stroke();
+          ctx.strokeStyle = main;
+          ctx.lineWidth = s * .23;
+          ctx.stroke();
+          pxRect(s * .42, -s * .07, s * .08, s * .08, "#fff");
+          pxRect(s * .47, -s * .055, s * .035, s * .035, outline);
+          return;
+        }
+
+        if (id.includes("Shark")) {
+          ctx.fillStyle = outline;
+          ctx.beginPath();
+          ctx.moveTo(-s * .8, 0);
+          ctx.lineTo(-s * 1.15, -s * .35);
+          ctx.lineTo(-s * 1.08, s * .34);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = main;
+          ctx.beginPath();
+          ctx.moveTo(-s * .76, 0);
+          ctx.lineTo(-s * 1.02, -s * .23);
+          ctx.lineTo(-s * .98, s * .23);
+          ctx.closePath();
+          ctx.fill();
+
+          ctx.fillStyle = outline;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, s * .83, s * .38, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = main;
+          ctx.beginPath();
+          ctx.ellipse(0, -s * .02, s * .76, s * .31, 0, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = light;
+          ctx.beginPath();
+          ctx.ellipse(s * .18, s * .1, s * .5, s * .13, 0, 0, Math.PI);
+          ctx.fill();
+          ctx.fillStyle = dark;
+          ctx.beginPath();
+          ctx.moveTo(-s * .12, -s * .3);
+          ctx.lineTo(s * .12, -s * .72);
+          ctx.lineTo(s * .27, -s * .25);
+          ctx.fill();
+          pxRect(s * .39, -s * .16, s * .09, s * .09, "#fff");
+          pxRect(s * .44, -s * .14, s * .04, s * .04, outline);
+          return;
+        }
+
+        ctx.fillStyle = outline;
+        ctx.beginPath();
+        ctx.moveTo(-s * .65, 0);
+        ctx.lineTo(-s * 1.05, -s * .42);
+        ctx.lineTo(-s * .98, s * .42);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = dark;
+        ctx.beginPath();
+        ctx.moveTo(-s * .66, 0);
+        ctx.lineTo(-s * .91, -s * .29);
+        ctx.lineTo(-s * .87, s * .29);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = outline;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, s * .73, id === "flatfish" ? s * .45 : s * .39, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = main;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, s * .66, id === "flatfish" ? s * .38 : s * .32, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = light;
+        ctx.beginPath();
+        ctx.ellipse(s * .07, -s * .08, s * .42, s * .14, -.08, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (id === "salmon") {
+          pxRect(-s * .18, -s * .3, s * .09, s * .6, dark);
+          pxRect(s * .08, -s * .31, s * .09, s * .6, dark);
+        }
+        if (id === "flatfish") {
+          pxRect(-s * .12, -s * .17, s * .06, s * .06, dark);
+          pxRect(s * .1, s * .1, s * .07, s * .07, dark);
+        }
+
+        ctx.fillStyle = outline;
+        ctx.beginPath();
+        ctx.moveTo(-s * .12, -s * .29);
+        ctx.lineTo(s * .05, -s * .53);
+        ctx.lineTo(s * .2, -s * .27);
+        ctx.fill();
+        pxRect(s * .36, -s * .17, s * .11, s * .11, "#fff");
+        pxRect(s * .42, -s * .145, s * .045, s * .045, outline);
+        pxRect(s * .57, s * .04, s * .09, s * .04, outline);
+      }
+
+      function drawTrash(id, s) {
+        const outline = "#071d3d";
+        if (id === "plastic") {
+          pxRect(-s * .23, -s * .48, s * .46, s * .95, outline);
+          pxRect(-s * .17, -s * .4, s * .34, s * .78, "#9deaf0");
+          pxRect(-s * .11, -s * .58, s * .22, s * .19, outline);
+          pxRect(-s * .07, -s * .53, s * .14, s * .1, "#ff5470");
+          pxRect(-s * .16, -s * .1, s * .32, s * .18, "#f8ff65");
+          return;
+        }
+        if (id === "bag") {
+          ctx.fillStyle = outline;
+          ctx.beginPath();
+          ctx.moveTo(-s * .48, -s * .28);
+          ctx.lineTo(s * .48, -s * .28);
+          ctx.lineTo(s * .38, s * .48);
+          ctx.lineTo(-s * .38, s * .48);
+          ctx.closePath();
+          ctx.fill();
+          ctx.fillStyle = "rgba(238,252,255,.78)";
+          ctx.fillRect(-s * .38, -s * .18, s * .76, s * .56);
+          ctx.strokeStyle = outline;
+          ctx.lineWidth = 5;
+          ctx.beginPath();
+          ctx.arc(0, -s * .25, s * .22, Math.PI, 0);
+          ctx.stroke();
+          pxRect(-s * .1, .02 * s, s * .2, s * .07, "#ff5470");
+          return;
+        }
+        pxRect(-s * .43, -s * .42, s * .86, s * .84, outline);
+        pxRect(-s * .34, -s * .33, s * .68, s * .66, "#ff785a");
+        pxRect(-s * .33, -s * .18, s * .66, s * .11, "#fff9dd");
+        pxRect(-s * .14, -s * .48, s * .28, s * .08, outline);
+      }
+
+      function burst(x, y, positive, color) {
+        const count = positive ? 15 : 10;
+        for (let i = 0; i < count; i++) {
+          const angle = random(0, Math.PI * 2);
+          const speed = random(90, 260);
+          particles.push({
+            x,
+            y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 60,
+            life: random(.35, .72),
+            maxLife: .72,
+            size: random(4, 11),
+            color: color || (positive ? "#bdf8f4" : "#ff5470"),
+          });
+        }
+      }
+
+      function drawParticle(p) {
+        const alpha = Math.max(0, p.life / p.maxLife);
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = p.color;
+        ctx.fillRect(Math.round(p.x), Math.round(p.y), p.size, p.size);
+        ctx.fillStyle = "rgba(255,255,255,.75)";
+        ctx.fillRect(Math.round(p.x + 2), Math.round(p.y + 1), Math.max(2, p.size * .28), Math.max(2, p.size * .28));
+        ctx.globalAlpha = 1;
+      }
+
+      function drawPopup(p) {
+        const alpha = Math.min(1, p.life * 2.2);
+        ctx.globalAlpha = alpha;
+        ctx.font = '900 38px "Courier New", monospace';
+        ctx.textAlign = "center";
+        ctx.lineWidth = 8;
+        ctx.strokeStyle = "#071d3d";
+        const text = p.value > 0 ? `+${p.value}` : String(p.value);
+        ctx.strokeText(text, p.x, p.y);
+        ctx.fillStyle = p.value > 0 ? "#f8ff65" : "#ff5470";
+        ctx.fillText(text, p.x, p.y);
+        ctx.globalAlpha = 1;
+      }
+
+      function getCanvasPoint(event) {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (event.clientX - rect.left) * (W / rect.width),
+          y: (event.clientY - rect.top) * (H / rect.height),
+        };
+      }
+
+      function handlePointer(event) {
+        event.preventDefault();
+        if (!playing) return;
+        const point = getCanvasPoint(event);
+        let target = null;
+
+        for (let i = objects.length - 1; i >= 0; i--) {
+          const obj = objects[i];
+          const dx = point.x - obj.x;
+          const dy = point.y - obj.y;
+          const hitW = obj.type.id.includes("Shark") ? obj.size * 1.1 : obj.size * .9;
+          const hitH = obj.type.id === "eel" ? obj.size * .55 : obj.size * .62;
+          if ((dx * dx) / (hitW * hitW) + (dy * dy) / (hitH * hitH) <= 1) {
+            target = obj;
+            break;
+          }
+        }
+
+        if (target) {
+          target.hit = true;
+          score += target.type.score;
+          scoreDisplay.textContent = padScore(score);
+          scoreDisplay.classList.remove("score-bump");
+          void scoreDisplay.offsetWidth;
+          scoreDisplay.classList.add("score-bump");
+
+          popups.push({ x: target.x, y: target.y - target.size * .45, value: target.type.score, life: .9 });
+          const positive = target.type.score > 0;
+          const color = target.type.id === "gold" ? "#ffd428" : positive ? "#bdf8f4" : "#ff5470";
+          burst(target.x, target.y, positive, color);
+          flash = positive ? .65 : .25;
+          shake = positive ? (target.type.id === "gold" ? 9 : 4) : 7;
+        } else {
+          burst(point.x, point.y, true, "#8ff5ff");
+        }
+      }
+
+      let lastTouchEnd = 0;
+      document.addEventListener("touchend", event => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 350) event.preventDefault();
+        lastTouchEnd = now;
+      }, { passive: false });
+
+      document.addEventListener("gesturestart", event => event.preventDefault(), { passive: false });
+      canvas.addEventListener("pointerdown", handlePointer, { passive: false });
+      screenShell.addEventListener("wheel", event => {
+        event.preventDefault();
+        window.scrollBy({ top: event.deltaY, left: 0, behavior: "auto" });
+      }, { passive: false });
+      canvas.addEventListener("contextmenu", event => event.preventDefault());
+      startButton.addEventListener("click", requestStart);
+      restartButton.addEventListener("click", startGame);
+      playerNameInput.addEventListener("input", () => {
+        if (playerNameInput.value.trim()) nameError.textContent = "";
+      });
+      playerNameInput.addEventListener("keydown", event => {
+        if (event.key === "Enter") requestStart();
+      });
+
+      makeBubbles();
+      draw();
+    })();
+  </script>
+</body>
+</html>
